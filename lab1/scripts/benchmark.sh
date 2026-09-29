@@ -5,4 +5,4 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 bash scripts/build.sh
 
-java -cp build/classes lab1.Main
+java -cp build/classes lab1.Main "$@"
