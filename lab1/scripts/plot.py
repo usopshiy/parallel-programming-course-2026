@@ -19,6 +19,7 @@ for filename, label, color in [
     ("empty-lock.csv", "Этап 1: пустой лок", "#ea580c"),
     ("striped.csv", "Этап 2: 16 локов", "#16a34a"),
     ("thread-local.csv", "Этап 3: Thread-Local", "#9333ea"),
+    ("double-buffer.csv", "Этап 4: двойной буфер", "#dc2626"),
 ]:
     measurements = {}
     with (results / filename).open() as source:
@@ -32,7 +33,7 @@ for filename, label, color in [
     ax.plot(threads, rates, marker="o", label=label, color=color, linewidth=2)
 
 ax.set_title(
-    "Коллектор метрик: этапы 0–3\n"
+    "Коллектор метрик: этапы 0–4\n"
     "Apple M2 · Java 21 · медиана пяти замеров по 5 секунд"
 )
 ax.set_xlabel("Число потоков")

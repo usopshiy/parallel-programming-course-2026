@@ -6,6 +6,7 @@ import lab1.benchmark.Benchmark;
 import lab1.benchmark.ConsistencyTest;
 import lab1.benchmark.ZipfGenerator;
 import lab1.collectors.BaselineCollector;
+import lab1.collectors.DoubleBufferCollector;
 import lab1.collectors.EmptyLockCollector;
 import lab1.collectors.MetricsCollector;
 import lab1.collectors.MutexCollector;
@@ -29,6 +30,8 @@ public final class Main {
             case "empty-lock" -> new EmptyLockCollector();
             case "striped" -> new StripedCollector();
             case "thread-local" -> new ThreadLocalCollector();
+            case "double-buffer" -> new DoubleBufferCollector();
+            case "double-buffer-unchecked" -> new DoubleBufferCollector(false);
             default -> throw new IllegalArgumentException("Unknown collector: " + name);
         };
 
