@@ -10,6 +10,7 @@ import lab1.collectors.EmptyLockCollector;
 import lab1.collectors.MetricsCollector;
 import lab1.collectors.MutexCollector;
 import lab1.collectors.StripedCollector;
+import lab1.collectors.ThreadLocalCollector;
 
 public final class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -27,6 +28,7 @@ public final class Main {
             case "mutex" -> new MutexCollector();
             case "empty-lock" -> new EmptyLockCollector();
             case "striped" -> new StripedCollector();
+            case "thread-local" -> new ThreadLocalCollector();
             default -> throw new IllegalArgumentException("Unknown collector: " + name);
         };
 
