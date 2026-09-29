@@ -1,0 +1,36 @@
+Threads: 1
+Warmup: 5 seconds
+Measurement 1/5: 5 seconds
+Measurement 2/5: 5 seconds
+Measurement 3/5: 5 seconds
+Measurement 4/5: 5 seconds
+Measurement 5/5: 5 seconds
+Snapshot count: 2138356829
+Median: 71.893 million ops/sec
+Threads: 2
+Warmup: 5 seconds
+Measurement 1/5: 5 seconds
+Measurement 2/5: 5 seconds
+Measurement 3/5: 5 seconds
+Measurement 4/5: 5 seconds
+Measurement 5/5: 5 seconds
+Snapshot count: 536141451
+Median: 17.880 million ops/sec
+Threads: 4
+Warmup: 5 seconds
+Measurement 1/5: 5 seconds
+Measurement 2/5: 5 seconds
+Measurement 3/5: 5 seconds
+Measurement 4/5: 5 seconds
+Measurement 5/5: 5 seconds
+Snapshot count: 485950083
+Median: 16.287 million ops/sec
+Threads: 8
+Warmup: 5 seconds
+Measurement 1/5: 5 seconds
+Measurement 2/5: 5 seconds
+Measurement 3/5: 5 seconds
+Measurement 4/5: 5 seconds
+Measurement 5/5: 5 seconds
+Snapshot count: 476910587
+Median: 15.901 million ops/sec
