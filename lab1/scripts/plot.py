@@ -30,7 +30,10 @@ for filename, label, color in [
 
     threads = sorted(measurements)
     rates = [median(measurements[count]) / 1_000_000 for count in threads]
-    ax.plot(threads, rates, marker="o", label=label, color=color, linewidth=2)
+    if filename == "throughput.csv":
+        ax.axhline(rates[0], label=label, color=color, linestyle="--", linewidth=2)
+    else:
+        ax.plot(threads, rates, marker="o", label=label, color=color, linewidth=2)
 
 ax.set_title(
     "Коллектор метрик: этапы 0–4\n"
