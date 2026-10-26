@@ -1,0 +1,8 @@
+Warmup: 5 seconds
+Measurement 1/5: 5 seconds
+Measurement 2/5: 5 seconds
+Measurement 3/5: 5 seconds
+Measurement 4/5: 5 seconds
+Measurement 5/5: 5 seconds
+Snapshot count: 14263008130
+Median: 475.246 million ops/sec

@@ -1,0 +1,4 @@
+threads,snapshots,inconsistent_percent,less,greater,operations,final_count,count_difference
+4,10000,94.37,9437,0,5101421,5108589,7168
+4,10000,95.98,9598,0,8311678,8311553,-125
+4,10000,97.42,9742,0,7888656,7888622,-34
