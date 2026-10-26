@@ -1,6 +1,7 @@
 package lab2;
 
 import java.util.List;
+import java.util.Objects;
 
 /* Стратегии выбора следующего потока.
  * FirstAlive — этап 1, Replay — этап 2, RandomPick — этап 3, Dfs — этап 4 (ограничение bound — этап 5).
@@ -17,13 +18,28 @@ public final class Strategies {
 
     /** Проигрывает трассу: на i-м решении выбирает поток trace[i] ('A' -> 0, 'B' -> 1). */
     public static final class Replay implements Strategy {
-        public Replay(String trace) { }
+        private final String trace;
+        private int position;
+
+        public Replay(String trace) {
+            this.trace = Objects.requireNonNull(trace);
+        }
 
         /** Сбросить позицию в трассе перед прогоном. */
-        public void beginRun() { }
+        public void beginRun() { position = 0; }
 
         public int pick(List<Integer> enabled, int last) {
-            throw new UnsupportedOperationException("TODO этап 2: Replay.pick");
+            if (position >= trace.length()) {
+                throw new IllegalArgumentException("Replay trace ended before decision " + (position + 1));
+            }
+            char thread = trace.charAt(position);
+            int id = thread - 'A';
+            if (!enabled.contains(id)) {
+                throw new IllegalArgumentException("Replay thread " + thread
+                        + " is not enabled at decision " + (position + 1));
+            }
+            position++;
+            return id;
         }
     }
 

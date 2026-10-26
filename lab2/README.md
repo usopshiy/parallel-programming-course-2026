@@ -646,8 +646,8 @@ mode=volatile samples=2,000,000
 | Этап | Команда | Совпал с методичкой  |
 |---|---|---|
 | 1 | `withdraw-v0 first` | да |
-| 2 | `withdraw-v1 first` | не проверено |
-| 2 | `transfer replay AB` | не проверено |
+| 2 | `withdraw-v1 first` | да |
+| 2 | `transfer replay AB` | да |
 
 ### 2. Результаты этапов 0–5
 

@@ -3,6 +3,7 @@ package lab2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.concurrent.Semaphore;
 import java.util.function.BooleanSupplier;
 
@@ -19,6 +20,7 @@ public final class Scheduler {
 
     private static final ThreadLocal<Worker> CURRENT = new ThreadLocal<>();
     private final List<Worker> workers = new ArrayList<>();
+    private final List<SchedLock> locks = new ArrayList<>();
     private final Semaphore returned = new Semaphore(0);
     private final StringBuilder trace = new StringBuilder();
     private boolean started;
@@ -65,7 +67,7 @@ public final class Scheduler {
         }
 
         void record(String operation) {
-            if (logging) log.add((char) ('A' + id) + "  " + operation);
+            if (logging && !aborted) log.add((char) ('A' + id) + "  " + operation);
         }
 
         void rethrowFailure() {
@@ -109,8 +111,12 @@ public final class Scheduler {
                 }
                 if (!alive) break;
                 if (enabled.isEmpty()) {
-                    // Lock ownership and the DEADLOCK report are added in stage 2.
-                    throw new IllegalStateException("No enabled threads: all live threads are waiting");
+                    StringJoiner held = new StringJoiner(", ", "held={", "}");
+                    for (SchedLock lock : locks) {
+                        if (lock.owner >= 0) held.add(lock.name + ":" + (char) ('A' + lock.owner));
+                    }
+                    deadlock = held.toString();
+                    break;
                 }
                 int next = strategy.pick(enabled, last);
                 if (!enabled.contains(next)) {
@@ -161,12 +167,8 @@ public final class Scheduler {
     /** Ждать, пока cond не станет true. До этого поток не попадает в enabled. */
     public static void await(BooleanSupplier cond) {
         Objects.requireNonNull(cond);
-        Worker worker = current();
-        worker.waiting = cond;
-        if (worker.touched || !cond.getAsBoolean()) worker.pause();
-        worker.waiting = null;
-        worker.record("await done");
-        worker.touched = true;
+        beforeAccess(cond);
+        logOperation("await done");
     }
 
     private static Worker current() {
@@ -176,9 +178,33 @@ public final class Scheduler {
     }
 
     static void beforeAccess() {
+        beforeAccess(null);
+    }
+
+    static void beforeAccess(BooleanSupplier ready) {
         Worker worker = current();
-        if (worker.touched) worker.pause();
+        // Keep the predicate until selection: a free lock may be taken by another worker.
+        worker.waiting = ready;
+        if (worker.touched || (ready != null && !ready.getAsBoolean())) worker.pause();
+        worker.waiting = null;
         worker.touched = true;
+    }
+
+    void registerLock(SchedLock lock) {
+        if (started) throw new IllegalStateException("Cannot register a lock after run has started");
+        locks.add(lock);
+    }
+
+    int currentThreadId() {
+        Worker worker = current();
+        if (worker.id >= workers.size() || workers.get(worker.id) != worker) {
+            throw new IllegalStateException("Lock belongs to a different scheduler");
+        }
+        return worker.id;
+    }
+
+    boolean isAborted() {
+        return aborted;
     }
 
     static void logOperation(String operation) {
