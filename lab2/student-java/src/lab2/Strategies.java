@@ -71,22 +71,34 @@ public final class Strategies {
         }
 
         private final List<Choice> path = new ArrayList<>();
+        private final int bound;
         private int position;
+        private int preemptions;
 
         public Dfs(int bound) {
-            if (bound != Integer.MAX_VALUE) {
-                throw new UnsupportedOperationException("TODO этап 5: bounded DFS");
-            }
+            if (bound < 0) throw new IllegalArgumentException("Preemption bound must be non-negative");
+            this.bound = bound;
         }
 
         /** Подготовиться к новому прогону (позиция в пути, счётчик вытеснений). */
-        public void beginRun() { position = 0; }
+        public void beginRun() {
+            position = 0;
+            preemptions = 0;
+        }
 
         public int pick(List<Integer> enabled, int last) {
+            boolean canContinue = enabled.contains(last);
             // Replay the saved prefix, then take the first option at each new branch.
-            if (position == path.size()) path.add(new Choice(enabled));
+            if (position == path.size()) {
+                List<Integer> options = canContinue && preemptions == bound
+                        ? List.of(last) : enabled;
+                path.add(new Choice(options));
+            }
             Choice choice = path.get(position++);
-            return choice.options.get(choice.selected);
+            int next = choice.options.get(choice.selected);
+            // Switching after a block or completion does not count as preemption.
+            if (canContinue && next != last) preemptions++;
+            return next;
         }
 
         /** Выбрать следующий путь; false — дерево обойдено. */

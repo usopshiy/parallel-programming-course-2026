@@ -684,11 +684,37 @@ mode=volatile samples=2,000,000
 #### Этап 5: Bounded
 | Программа | K | Расписаний | Ошибок | Первая ошибочная трасса | На каком решении вытеснение (для минимального K; нумерация с 1, как в этапе 5) |
 |---|---|---|---|---|---|
-| `withdraw-v1` | 0 | | | | |
-| `withdraw-v1` | 1 | | | | |
-| `withdraw-v1` | 2 | | | | |
-| `transfer` | 0 | | | | |
-| `transfer` | 1 | | | | |
+| `withdraw-v1` | 0 | 2 | 0 | — | — |
+| `withdraw-v1` | 1 | 4 | 2 | `AABBBBAA` | №3: A → B |
+| `withdraw-v1` | 2 | 6 | 4 | `AABBAABB` | — |
+| `transfer` | 0 | 2 | 0 | — | — |
+| `transfer` | 1 | 6 | 2 | `AB` | №2: A → B |
+
+Минимальное K для обеих программ — **1**.
+
+Лог `withdraw-v1 replay AABBBBAA log`:
+
+```A  lock mu
+  A  unlock mu
+  A  window
+  B  lock mu      # решение №3: вытеснение A → B, A мог продолжить
+  B  unlock mu
+  B  window
+  B  lock mu
+  B  unlock mu
+  A  lock mu
+  A  unlock mu
+schedule AABBBBAA -> OVERDRAFT balance=-100 results=true,true
+```
+Лог `transfer replay AB log`:
+
+```text
+  A  lock a
+  A  window
+  B  lock b       # решение №2: вытеснение A → B, A мог захватить свободный b
+  B  window
+schedule AB -> DEADLOCK held={a:A, b:B}
+```
 
 ### 3. Результаты этапа 6 (Коллектор)
 
