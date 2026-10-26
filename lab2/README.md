@@ -641,7 +641,13 @@ mode=volatile samples=2,000,000
 - Операционная система и версия ядра: macOS 26.6.2 (25G83), Darwin 25.6.0.
 - Версия компилятора / JDK: Eclipse Temurin OpenJDK 21.0.12.1+1-LTS (arm64), `javac 21.0.12.1`.
 - (C++) Предупреждений TSan на командах этапов 2 и 4: ...
-- Этапы 1–2: вывод `withdraw-v0 first`, `withdraw-v1 first`, `transfer replay AB` совпал с методичкой (да / нет): `...`
+- Этапы 1–2: вывод `withdraw-v0 first`, `withdraw-v1 first`, `transfer replay AB` совпал с методичкой (да / нет):
+
+| Этап | Команда | Совпал с методичкой  |
+|---|---|---|
+| 1 | `withdraw-v0 first` | да |
+| 2 | `withdraw-v1 first` | не проверено |
+| 2 | `transfer replay AB` | не проверено |
 
 ### 2. Результаты этапов 0–5
 
