@@ -1,5 +1,6 @@
 package lab2;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -60,18 +61,47 @@ public final class Strategies {
     /** Stateless DFS по дереву выборов: каждый прогон с нуля, повторяет префикс прошлого и берёт следующий вариант.
      *  bound — максимум вытеснений (этап 5); для dfs runner передаёт Integer.MAX_VALUE. */
     public static final class Dfs implements Strategy {
-        public Dfs(int bound) { }
+        private static final class Choice {
+            final List<Integer> options;
+            int selected;
+
+            Choice(List<Integer> options) {
+                this.options = List.copyOf(options);
+            }
+        }
+
+        private final List<Choice> path = new ArrayList<>();
+        private int position;
+
+        public Dfs(int bound) {
+            if (bound != Integer.MAX_VALUE) {
+                throw new UnsupportedOperationException("TODO этап 5: bounded DFS");
+            }
+        }
 
         /** Подготовиться к новому прогону (позиция в пути, счётчик вытеснений). */
-        public void beginRun() { }
+        public void beginRun() { position = 0; }
 
         public int pick(List<Integer> enabled, int last) {
-            throw new UnsupportedOperationException("TODO этап 4: Dfs.pick");
+            // Replay the saved prefix, then take the first option at each new branch.
+            if (position == path.size()) path.add(new Choice(enabled));
+            Choice choice = path.get(position++);
+            return choice.options.get(choice.selected);
         }
 
         /** Выбрать следующий путь; false — дерево обойдено. */
         public boolean endRun() {
-            throw new UnsupportedOperationException("TODO этап 4: Dfs.endRun");
+            // A deadlock can end a run before the previous path's depth.
+            path.subList(position, path.size()).clear();
+            while (!path.isEmpty()) {
+                Choice choice = path.get(path.size() - 1);
+                if (choice.selected + 1 < choice.options.size()) {
+                    choice.selected++;
+                    return true;
+                }
+                path.remove(path.size() - 1);
+            }
+            return false;
         }
     }
 }
